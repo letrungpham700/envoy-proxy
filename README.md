@@ -31,6 +31,10 @@ envoy --version
 ```bash
 git clone https://github.com/letrungpham700/envoy-proxy.git
 ```
+#### Check Config Envoy Proxy
+```bash
+envoy --mode validate -c /etc/envoy/envoy.yaml
+```
 #### Run Envoy Proxy
 ```bash
 envoy -c envoy.yaml
