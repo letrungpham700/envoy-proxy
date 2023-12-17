@@ -27,9 +27,17 @@ sudo apt install -y getenvoy-envoy
 ```bash
 envoy --version
 ```
-### Config Envoy Proxy
+### Clone Config Envoy Proxy
 ```bash
 git clone https://github.com/letrungpham700/envoy-proxy.git
+```
+#### Setup Config
+```bash
+cd envoy-proxy
+
+mkdir /etc/envoy
+
+cp config/envoy.yaml /etc/envoy/envoy.yaml
 ```
 #### Check Config Envoy Proxy
 ```bash
@@ -39,5 +47,25 @@ envoy --mode validate -c /etc/envoy/envoy.yaml
 ```bash
 envoy -c envoy.yaml
 ```
+#### Run Service with Systemd
+```bash
+nano /etc/systemd/system/envoy-proxy.service
+```
 
+```bash
+[Unit]
+Description=Envoy Proxy Service
+Wants=network-online.target
+After=network-online.target
 
+[Service]
+Type=simple
+WorkingDirectory=/etc/envoy/
+ExecStart=/usr/bin/envoy -c /etc/envoy/envoy.yaml
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+```
