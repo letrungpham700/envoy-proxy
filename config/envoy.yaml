@@ -48,44 +48,44 @@ static_resources:
               domains: ["*"]
               routes:
               - match:
-                  prefix: "/api/v1/series"
+                  prefix: "/"
                 route:
                   host_rewrite_literal: 0.0.0.0
-                  cluster: prome_series
+                  cluster: web1_series
               - match:
-                  prefix: "/-/healthy"
+                  prefix: "/"
                 route:
                   host_rewrite_literal: 0.0.0.0
-                  cluster: prome_targets
+                  cluster: web2_series
 
   clusters:
-  - name: prome_series
+  - name: web1_series
     type: LOGICAL_DNS
-    connect_timeout: 5s
+    connect_timeout: 3s
     # Comment out the following line to test on v6 networks
     dns_lookup_family: V4_ONLY
     load_assignment:
-      cluster_name: prome_series
+      cluster_name: web1_series
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: envoyproxy.io
-                port_value: 80
-  - name: prome_targets
+                address: localhost
+                port_value: 5000
+  - name: web2_series
     type: LOGICAL_DNS
-    connect_timeout: 5s
+    connect_timeout: 3s
     dns_lookup_family: V4_ONLY
     load_assignment:
-      cluster_name: prome_targets
+      cluster_name: web2_series
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: envoyproxy.io
-                port_value: 80
+                address: localhost
+                port_value: 4000
 
 
     transport_socket:
