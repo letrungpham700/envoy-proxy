@@ -29,25 +29,42 @@ static_resources:
                   %RESPONSE_CODE% %RESPONSE_FLAGS% %RESPONSE_CODE_DETAILS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION%
                   %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% "%REQ(X-FORWARDED-FOR)%" "%REQ(USER-AGENT)%"
                   "%REQ(X-REQUEST-ID)%" "%REQ(:AUTHORITY)%" "%UPSTREAM_HOST%" "%UPSTREAM_TRANSPORT_FAILURE_REASON%"\n
+          # http_filters:
+          # - name: envoy.filters.http.header_to_metadata
+          #   typed_config:
+          #     "@type": type.googleapis.com/envoy.extensions.filters.http.header_to_metadata.v3.Config
+          #     request_rules:
+          #     - header: x-version
+          #       on_header_present:
+          #         metadata_namespace: envoy.lb
+          #         key: version
+          #         type: STRING
+          #       on_header_missing:
+          #         metadata_namespace: envoy.lb
+          #         key: default
+          #         value: "true"
+          #         type: STRING
+          #       remove: false
+          # - name: envoy.filters.http.router
+          #   typed_config:
+          #     "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
           http_filters:
+          - name: envoy.filters.http.router
           - name: envoy.filters.http.header_to_metadata
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.header_to_metadata.v3.Config
               request_rules:
-              - header: x-version
+              - header: x-custom-header
                 on_header_present:
-                  metadata_namespace: envoy.lb
-                  key: version
+                  metadata_namespace: custom
+                  key: custom_header
                   type: STRING
-                on_header_missing:
-                  metadata_namespace: envoy.lb
-                  key: default
-                  value: "true"
+              response_rules:
+              - header: x-custom-header
+                on_header_present:
+                  metadata_namespace: custom
+                  key: custom_header
                   type: STRING
-                remove: false
-          - name: envoy.filters.http.router
-            typed_config:
-              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
           stat_prefix: ingress_http
           route_config:
