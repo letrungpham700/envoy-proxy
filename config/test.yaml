@@ -61,34 +61,28 @@ static_resources:
                 route:
                   cluster: web_series
 
+
   clusters:
-  - name: web1_series
-    type: LOGICAL_DNS
-    connect_timeout: 3s
+  - name: web_series
+    type: strict_dns
+    connect_timeout: 2s
     # Comment out the following line to test on v6 networks
-    dns_lookup_family: V4_ONLY
+    lb_policy: round_robin
     load_assignment:
-      cluster_name: web1_series
+      cluster_name: web_series
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: localhost
+                address: 10.1.52.22
                 port_value: 5000
-  - name: web2_series
-    type: LOGICAL_DNS
-    connect_timeout: 3s
-    dns_lookup_family: V4_ONLY
-    load_assignment:
-      cluster_name: web2_series
-      endpoints:
-      - lb_endpoints:
         - endpoint:
             address:
               socket_address:
-                address: localhost
-                port_value: 4000
+                address: 10.1.52.23
+                port_value: 5000
+
 
 
     transport_socket:
